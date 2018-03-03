@@ -1,0 +1,16 @@
+[
+	{
+		"modid": "montagne",
+  		"name": "Montagne",
+  		"description": "Mod for creative building",
+  		"version": "${version}",
+  		"mcversion": "${mcversion}",
+  		"url": "https://github.com/mchorse/montagne",
+  		"updateUrl": "",
+  		"authorList": ["mchorse"],
+  		"credits": "",
+		"logoFile": "",
+		"screenshots": [],
+		"dependencies": []
+	}
+]
