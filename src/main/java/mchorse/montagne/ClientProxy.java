@@ -1,5 +1,8 @@
 package mchorse.montagne;
 
+import mchorse.montagne.client.KeyboardHandler;
+import mchorse.montagne.client.RenderingHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,5 +28,8 @@ public class ClientProxy extends CommonProxy
     public void load(FMLInitializationEvent event)
     {
         super.load(event);
+
+        MinecraftForge.EVENT_BUS.register(new KeyboardHandler());
+        MinecraftForge.EVENT_BUS.register(new RenderingHandler());
     }
 }
