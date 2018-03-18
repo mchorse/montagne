@@ -2,7 +2,9 @@ package mchorse.montagne.network;
 
 import mchorse.montagne.Montagne;
 import mchorse.montagne.network.client.ClientHandlerToggleBuildingMode;
+import mchorse.montagne.network.common.PacketPlaceMidAirBlock;
 import mchorse.montagne.network.common.PacketToggleBuildingMode;
+import mchorse.montagne.network.server.ServerHandlerPlaceMidAirBlock;
 import mchorse.montagne.network.server.ServerHandlerToggleBuildingMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
@@ -57,6 +59,8 @@ public class Dispatcher
     {
         register(PacketToggleBuildingMode.class, ClientHandlerToggleBuildingMode.class, Side.CLIENT);
         register(PacketToggleBuildingMode.class, ServerHandlerToggleBuildingMode.class, Side.SERVER);
+
+        register(PacketPlaceMidAirBlock.class, ServerHandlerPlaceMidAirBlock.class, Side.SERVER);
     }
 
     private static <REQ extends IMessage, REPLY extends IMessage> void register(Class<REQ> message, Class<? extends IMessageHandler<REQ, REPLY>> handler, Side side)
