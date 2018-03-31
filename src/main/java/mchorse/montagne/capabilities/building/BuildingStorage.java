@@ -22,7 +22,7 @@ public class BuildingStorage implements IStorage<IBuilding>
     {
         NBTTagCompound tag = new NBTTagCompound();
 
-        tag.setBoolean("BuildingMode", instance.isBuildingMode());
+        instance.toNBT(tag);
 
         return tag;
     }
@@ -32,9 +32,7 @@ public class BuildingStorage implements IStorage<IBuilding>
     {
         if (nbt instanceof NBTTagCompound)
         {
-            NBTTagCompound tag = (NBTTagCompound) nbt;
-
-            instance.setBuildingMode(tag.getBoolean("BuildingMode"));
+            instance.fromNBT((NBTTagCompound) nbt);
         }
     }
 }

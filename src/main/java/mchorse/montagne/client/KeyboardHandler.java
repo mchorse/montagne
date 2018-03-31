@@ -54,9 +54,9 @@ public class KeyboardHandler
             return;
         }
 
-        IBuilding building = Building.get(this.mc.thePlayer);
+        IBuilding cap = Building.get(this.mc.thePlayer);
 
-        if (building.isBuildingMode())
+        if (cap.isBuildingMode())
         {
             RayTraceResult over = this.mc.objectMouseOver;
             RayTraceResult result = RenderingHandler.result;
