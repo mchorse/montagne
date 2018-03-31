@@ -2,7 +2,7 @@ package mchorse.montagne.capabilities.building;
 
 import java.util.List;
 
-import mchorse.montagne.api.MirrorAxis;
+import mchorse.montagne.api.Region;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -19,7 +19,7 @@ public interface IBuilding
 
     public void setBuildingMode(boolean mode);
 
-    public List<MirrorAxis> getMirrorAxes();
+    public List<Region> getRegions();
 
     public void placeBlock(RightClickBlock event);
 

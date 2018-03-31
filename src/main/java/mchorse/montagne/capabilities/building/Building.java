@@ -3,11 +3,10 @@ package mchorse.montagne.capabilities.building;
 import java.util.ArrayList;
 import java.util.List;
 
-import mchorse.montagne.api.MirrorAxis;
+import mchorse.montagne.api.Region;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
@@ -27,9 +26,9 @@ public class Building implements IBuilding
     private boolean mode;
 
     /**
-     * List of mirror axes 
+     * List of regions 
      */
-    private List<MirrorAxis> mirrors = new ArrayList<MirrorAxis>();
+    private List<Region> regions = new ArrayList<Region>();
 
     public static IBuilding get(EntityPlayer player)
     {
@@ -38,7 +37,12 @@ public class Building implements IBuilding
 
     public Building()
     {
-        this.mirrors.add(new MirrorAxis(905, 10, 1277, Axis.Y));
+        Region region = new Region();
+
+        region.origin.setPos(883, 4, 1263);
+        region.dimension.setPos(6, 24, 6);
+
+        this.regions.add(region);
     }
 
     @Override
@@ -54,9 +58,9 @@ public class Building implements IBuilding
     }
 
     @Override
-    public List<MirrorAxis> getMirrorAxes()
+    public List<Region> getRegions()
     {
-        return this.mirrors;
+        return this.regions;
     }
 
     @Override
@@ -74,32 +78,7 @@ public class Building implements IBuilding
             return;
         }
 
-        for (MirrorAxis axis : this.mirrors)
-        {
-            int x = pos.getX();
-            int y = pos.getY();
-            int z = pos.getZ();
-
-            x -= axis.origin.getX();
-            y -= axis.origin.getY();
-            z -= axis.origin.getZ();
-
-            System.out.println("Diff: " + x + ", " + y + ", " + z);
-
-            x = axis.origin.getX() + (axis.axis == Axis.X ? -x : x);
-            y = axis.origin.getY() + (axis.axis == Axis.Y ? -(y + 1) : y);
-            z = axis.origin.getZ() + (axis.axis == Axis.Z ? -z : z);
-
-            System.out.println("Placing: " + x + ", " + y + ", " + z + " from " + pos);
-
-            newPos = new BlockPos(x, y, z);
-
-            int j = stack.getMetadata();
-            int i = stack.stackSize;
-            stack.onItemUse(player, player.worldObj, newPos, event.getHand(), event.getFace(), (float) hit.xCoord, (float) hit.yCoord, (float) hit.zCoord);
-            stack.setItemDamage(j);
-            stack.stackSize = i;
-        }
+        /* TODO: implement region block placement */
     }
 
     @Override
@@ -108,23 +87,7 @@ public class Building implements IBuilding
         BlockPos pos = event.getPos();
         BlockPos newPos;
 
-        for (MirrorAxis axis : this.mirrors)
-        {
-            int x = pos.getX();
-            int y = pos.getY();
-            int z = pos.getZ();
-
-            x -= axis.origin.getX();
-            y -= axis.origin.getY();
-            z -= axis.origin.getZ();
-
-            x = axis.origin.getX() + (axis.axis == Axis.X ? -x : x);
-            y = axis.origin.getY() + (axis.axis == Axis.Y ? -(y + 1) : y);
-            z = axis.origin.getZ() + (axis.axis == Axis.Z ? -z : z);
-
-            newPos = new BlockPos(x, y, z);
-            event.getWorld().destroyBlock(newPos, false);
-        }
+        /* TODO: implement region block breaking */
     }
 
     @Override

@@ -2,7 +2,7 @@ package mchorse.montagne.client;
 
 import org.lwjgl.opengl.GL11;
 
-import mchorse.montagne.api.MirrorAxis;
+import mchorse.montagne.api.Region;
 import mchorse.montagne.capabilities.building.Building;
 import mchorse.montagne.capabilities.building.IBuilding;
 import net.minecraft.client.Minecraft;
@@ -10,10 +10,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -26,8 +24,6 @@ public class RenderingHandler
     public static RayTraceResult result;
 
     private Minecraft mc = Minecraft.getMinecraft();
-    private MutableBlockPos mirrorMin = new MutableBlockPos(0, 0, 0);
-    private MutableBlockPos mirrorMax = new MutableBlockPos(0, 0, 0);
 
     @SubscribeEvent
     public void onHudRender(RenderGameOverlayEvent.Post event)
@@ -168,91 +164,61 @@ public class RenderingHandler
         float renderZ = (float) (render.prevPosZ + (render.posZ - render.prevPosZ) * partialTicks);
 
         GlStateManager.enableBlend();
-        GlStateManager.glLineWidth(2);
+        GlStateManager.glLineWidth(3);
+        GlStateManager.color(1, 0.85F, 0, 0.75F);
         GlStateManager.disableTexture2D();
         GlStateManager.disableCull();
 
-        for (MirrorAxis axis : cap.getMirrorAxes())
+        for (Region region : cap.getRegions())
         {
-            axis.calculatePlane(this.mirrorMin, this.mirrorMax);
+            float org_x = region.origin.getX() - renderX;
+            float org_y = region.origin.getY() - renderY;
+            float org_z = region.origin.getZ() - renderZ;
 
-            float min_x = this.mirrorMin.getX() - renderX;
-            float min_y = this.mirrorMin.getY() - renderY;
-            float min_z = this.mirrorMin.getZ() - renderZ;
-
-            float max_x = this.mirrorMax.getX() - renderX;
-            float max_y = this.mirrorMax.getY() - renderY;
-            float max_z = this.mirrorMax.getZ() - renderZ;
-
-            float org_x = axis.origin.getX() - renderX;
-            float org_y = axis.origin.getY() - renderY;
-            float org_z = axis.origin.getZ() - renderZ;
+            float max_x = org_x + region.dimension.getX();
+            float max_y = org_y + region.dimension.getY();
+            float max_z = org_z + region.dimension.getZ();
 
             GL11.glBegin(GL11.GL_LINES);
 
-            if (axis.axis == Axis.X)
-            {
-                GlStateManager.color(1, 0, 0.5F, 0.75F);
-                GL11.glVertex3f(min_x, max_y, min_z);
-                GL11.glVertex3f(max_x, max_y, min_z);
+            /* Pillars */
+            GL11.glVertex3f(org_x, org_y, org_z);
+            GL11.glVertex3f(org_x, max_y, org_z);
 
-                GL11.glVertex3f(max_x, max_y, min_z);
-                GL11.glVertex3f(max_x, min_y, min_z);
+            GL11.glVertex3f(max_x, org_y, org_z);
+            GL11.glVertex3f(max_x, max_y, org_z);
 
-                GL11.glVertex3f(max_x, min_y, min_z);
-                GL11.glVertex3f(min_x, min_y, min_z);
+            GL11.glVertex3f(org_x, org_y, max_z);
+            GL11.glVertex3f(org_x, max_y, max_z);
 
-                GL11.glVertex3f(min_x, min_y, min_z);
-                GL11.glVertex3f(min_x, max_y, min_z);
+            GL11.glVertex3f(max_x, org_y, max_z);
+            GL11.glVertex3f(max_x, max_y, max_z);
 
-                GL11.glVertex3f(org_x, min_y, min_z);
-                GL11.glVertex3f(org_x, max_y, min_z);
+            /* Top */
+            GL11.glVertex3f(org_x, max_y, org_z);
+            GL11.glVertex3f(max_x, max_y, org_z);
 
-                GL11.glVertex3f(min_x, org_y, min_z);
-                GL11.glVertex3f(max_x, org_y, min_z);
-            }
-            else if (axis.axis == Axis.Y)
-            {
-                GlStateManager.color(0.5F, 1, 0, 0.75F);
-                GL11.glVertex3f(min_x, min_y, max_z);
-                GL11.glVertex3f(max_x, min_y, max_z);
+            GL11.glVertex3f(org_x, max_y, org_z);
+            GL11.glVertex3f(org_x, max_y, max_z);
 
-                GL11.glVertex3f(max_x, min_y, max_z);
-                GL11.glVertex3f(max_x, min_y, min_z);
+            GL11.glVertex3f(max_x, max_y, max_z);
+            GL11.glVertex3f(max_x, max_y, org_z);
 
-                GL11.glVertex3f(max_x, min_y, min_z);
-                GL11.glVertex3f(min_x, min_y, min_z);
+            GL11.glVertex3f(max_x, max_y, max_z);
+            GL11.glVertex3f(org_x, max_y, max_z);
 
-                GL11.glVertex3f(min_x, min_y, min_z);
-                GL11.glVertex3f(min_x, min_y, max_z);
+            /* Bottom */
+            GL11.glVertex3f(org_x, org_y, org_z);
+            GL11.glVertex3f(max_x, org_y, org_z);
 
-                GL11.glVertex3f(org_x, min_y, min_z);
-                GL11.glVertex3f(org_x, min_y, max_z);
+            GL11.glVertex3f(org_x, org_y, org_z);
+            GL11.glVertex3f(org_x, org_y, max_z);
 
-                GL11.glVertex3f(min_x, min_y, org_z);
-                GL11.glVertex3f(max_x, min_y, org_z);
-            }
-            else if (axis.axis == Axis.Z)
-            {
-                GlStateManager.color(0, 0.5F, 1, 0.75F);
-                GL11.glVertex3f(min_x, max_y, min_z);
-                GL11.glVertex3f(min_x, max_y, max_z);
+            GL11.glVertex3f(max_x, org_y, max_z);
+            GL11.glVertex3f(max_x, org_y, org_z);
 
-                GL11.glVertex3f(min_x, max_y, max_z);
-                GL11.glVertex3f(min_x, min_y, max_z);
-
-                GL11.glVertex3f(min_x, min_y, max_z);
-                GL11.glVertex3f(min_x, min_y, min_z);
-
-                GL11.glVertex3f(min_x, min_y, min_z);
-                GL11.glVertex3f(min_x, max_y, min_z);
-
-                GL11.glVertex3f(min_x, min_y, org_z);
-                GL11.glVertex3f(min_x, max_y, org_z);
-
-                GL11.glVertex3f(min_x, org_y, min_z);
-                GL11.glVertex3f(min_x, org_y, max_z);
-            }
+            GL11.glVertex3f(max_x, org_y, max_z);
+            GL11.glVertex3f(org_x, org_y, max_z);
 
             GL11.glEnd();
         }

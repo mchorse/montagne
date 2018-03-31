@@ -2,6 +2,7 @@ package mchorse.montagne.client;
 
 import org.lwjgl.input.Keyboard;
 
+import mchorse.montagne.ClientProxy;
 import mchorse.montagne.capabilities.building.Building;
 import mchorse.montagne.capabilities.building.IBuilding;
 import mchorse.montagne.network.Dispatcher;
@@ -24,6 +25,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 public class KeyboardHandler
 {
     public KeyBinding toggleBuildingMode;
+    public KeyBinding openBuildingGUI;
 
     private Minecraft mc = Minecraft.getMinecraft();
     private int delay;
@@ -31,8 +33,10 @@ public class KeyboardHandler
     public KeyboardHandler()
     {
         this.toggleBuildingMode = new KeyBinding("montagne.keys.toggle_build_mode", Keyboard.KEY_B, "montagne.keys.title");
+        this.openBuildingGUI = new KeyBinding("montagne.keys.open_build_gui", Keyboard.KEY_V, "montagne.keys.title");
 
         ClientRegistry.registerKeyBinding(this.toggleBuildingMode);
+        ClientRegistry.registerKeyBinding(this.openBuildingGUI);
     }
 
     @SubscribeEvent
@@ -43,6 +47,11 @@ public class KeyboardHandler
         if (this.toggleBuildingMode.isPressed())
         {
             Dispatcher.sendToServer(new PacketToggleBuildingMode(!building.isBuildingMode()));
+        }
+
+        if (this.openBuildingGUI.isPressed())
+        {
+            this.mc.displayGuiScreen(ClientProxy.GUI);
         }
     }
 
